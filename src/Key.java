@@ -6,18 +6,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Key extends JButton {
-    private Synth synth;
+    private Synthesizer synth;
     private int note;
     private int velocity;
 
-    public Key(Synth synth, int note, int velocity) throws MidiUnavailableException {
+    public Key(Synthesizer synth, int note, int velocity, int channelNumber) throws MidiUnavailableException {
         this.note = note;
         this.velocity = velocity;
         this.synth = synth;
         this.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
-                System.out.println(note + " | " + note % 12 + " | " + velocity);
-                synth.getChannel(5).noteOn(note, velocity);
+                synth.getChannels()[channelNumber].noteOn(Key.this.note, velocity);
             }
         });
         this.setText(getNoteName());
@@ -41,5 +41,10 @@ public class Key extends JButton {
     public String getNoteName() {
         String[] notes = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
         return notes[note % 12] + (note / 12);
+    }
+
+    public void setOctave(int octave) {
+        this.note = (octave*12) + (note % 12);
+        this.setText(getNoteName());
     }
 }
